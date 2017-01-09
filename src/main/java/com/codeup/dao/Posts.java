@@ -13,5 +13,8 @@ public interface Posts {
 
     void savePost(Post post);
 
+    Post find(long id);
+
+    void update(Post existingPost);
 }
 

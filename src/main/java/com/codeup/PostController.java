@@ -5,10 +5,7 @@ import com.codeup.models.Post;
 import com.sun.org.apache.xpath.internal.operations.Mod;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -33,4 +30,22 @@ public class PostController {
         DaoFactory.getPostsDao().savePost(post);
         return "redirect:/posts";
     }
+    @GetMapping("/posts/{id}/edit")
+    public String showEditForm(Model model, @PathVariable long id){
+        Post post = DaoFactory.getPostsDao().find(id);
+        model.addAttribute("post", post);
+        return "posts/edit";
+    }
+    @PostMapping("/posts/{id}/edit")
+    public String update(@ModelAttribute Post editedPost, @PathVariable long id){
+        Post existingPost = DaoFactory.getPostsDao().find(id);
+        String newTitle = editedPost.getTitle();
+        String newBody = editedPost.getBody();
+        existingPost.setTitle(newTitle);
+        existingPost.setBody(newBody);
+        DaoFactory.getPostsDao().update(existingPost);
+        return "redirect:/posts/" + existingPost.getId();
+    }
+
 }
+
