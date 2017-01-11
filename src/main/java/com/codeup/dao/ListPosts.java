@@ -6,14 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class ListPosts implements Posts{
-
-    private List<Post> allPosts; //array that can be modified. it only holds post objects
+public abstract class ListPosts implements Posts {
+    private List<Post> allPosts;
 
     public ListPosts(){
-        allPosts = new ArrayList<>(); //instantiating your list as an array list
+        allPosts = new ArrayList<>();
     }
-
     @Override
     public List<Post> getAllPosts() {
         return allPosts;
@@ -21,8 +19,7 @@ public class ListPosts implements Posts{
 
     @Override
     public void savePost(Post post) {
-        post.setId(allPosts.size()+1);
+        post.setId(allPosts.size()+ 1);
         allPosts.add(post);
     }
-
 }

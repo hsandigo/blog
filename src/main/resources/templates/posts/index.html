@@ -2,12 +2,10 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
-    <title>Posts</title>
+    <title>Index</title>
 </head>
 <body>
-
-
-
+<h1>My Posts</h1>
 
 <table>
     <tr>
@@ -17,7 +15,7 @@
     </tr>
     <tr th:each="post : ${posts}">
         <td th:text="${post.id}">ID</td>
-        <td th:text="${post.title}">Title</td>
+        <td><a th:text="${post.title}" th:href="@{'/posts/' + ${post.id}}"></a></td>
         <td th:text="${post.body}">Body</td>
     </tr>
 </table>
