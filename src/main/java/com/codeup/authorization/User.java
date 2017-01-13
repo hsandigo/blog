@@ -1,6 +1,9 @@
 package com.codeup.authorization;
 
+import com.codeup.models.Post;
+
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -18,7 +21,43 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    @OneToMany(mappedBy = "user")
+    private List<Post> posts;
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public List<Post> getPosts() {
+        return posts;
+    }
+
+    public void setPosts(List<Post> posts) {
+        this.posts = posts;
+    }
+
     public User() {
+
     }
 
     public User(User user) {
@@ -27,6 +66,7 @@ public class User {
         username = user.username;
         password = user.password;
     }
+
 
     public String getUsername() {
         return username;

@@ -1,9 +1,11 @@
 package com.codeup;
 
-import com.codeup.dao.DaoFactory;
+import com.codeup.authorization.User;
+import com.codeup.dao.Posts;
 import com.codeup.models.Post;
 
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -15,11 +17,14 @@ import java.util.List;
 @Controller
 @RequestMapping("/posts")
 
-public class PostController {
+public class PostsController extends BaseController {
+
+    @Autowired
+    private Posts postsDao;
 
     @GetMapping
     public String showPosts(Model model){
-        List<Post> posts = DaoFactory.getPostsDao().getAllPosts();
+        List<Post> posts = postsDao.findAll();
         model.addAttribute("posts", posts);
         return "posts/index";
     }
@@ -38,20 +43,32 @@ public class PostController {
             return "posts/create";
         }
 
-        DaoFactory.getPostsDao().savePost(post);
+        postsDao.save(post);
         return "redirect:/posts";
     }
 
     @GetMapping("/{id}")
     public String individualShowPage(Model model, @PathVariable int id) {
-        Post post = DaoFactory.getPostsDao().getPostById(id);
+        Post post = postsDao.findById(id);
+        User user = loggedInUser();
+        boolean isPostingUser = false;
+        if(user != null){
+            isPostingUser = post.getUser().getId() == user.getId();
+        }
         model.addAttribute("post", post);
+        model.addAttribute("isPostingUser", isPostingUser);
         return "posts/show";
     }
 
     @GetMapping("/{id}/edit")
     public String editPost(Model model, @PathVariable int id) {
-        Post post = DaoFactory.getPostsDao().getPostById(id);
+        Post post = postsDao.findById(id);
+        User user = loggedInUser();
+        if(loggedInUser() == null){
+            return "redirect:/posts/" + id;
+        }else if(post.getUser().getId() != loggedInUser().getId()){
+            return "redirect:/posts/" + id;
+        }
         model.addAttribute("post", post);
         return "posts/edit";
     }
@@ -62,17 +79,17 @@ public class PostController {
             model.addAttribute("post", post);
             return "posts/edit";
         }
-        Post existingPost = DaoFactory.getPostsDao().getPostById(id);
+        Post existingPost = postsDao.findById(id);
         existingPost.setTitle(post.getTitle());
         existingPost.setBody(post.getBody());
-        DaoFactory.getPostsDao().updatePost(existingPost);
+        postsDao.save(existingPost);
         return "redirect:/posts/" + id;
     }
 
     @PostMapping("/{id}/delete")
     public String deletePost(@PathVariable int id) {
-        Post post = DaoFactory.getPostsDao().getPostById(id);
-        DaoFactory.getPostsDao().deletePost(post);
+        Post post = postsDao.findById(id);
+        postsDao.delete(post);
         return "redirect:/posts";
     }
 }
