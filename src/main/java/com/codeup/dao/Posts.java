@@ -14,6 +14,10 @@ public interface Posts {
     List<Post> findAll();
     Post findById(int id);
 
+    void save(Post post);
+
+    void delete(Post post);
+
 //    List<Post> getAllPosts();
 //    void savePost(Post post);
 //    Post getPostById(int id);
